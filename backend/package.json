@@ -2,10 +2,11 @@
   "name": "ai-idea-validator-backend",
   "version": "1.0.0",
   "description": "Enterprise-grade SaaS backend for AI Startup Idea Validator",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
