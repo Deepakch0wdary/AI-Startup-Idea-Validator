@@ -68,7 +68,7 @@ router.get('/analytics', authenticateToken, isAdmin, async (req: AuthenticatedRe
       ENTERPRISE: 0,
     };
     
-    subscriptions.forEach(s => {
+    subscriptions.forEach((s: any) => {
       if (s.plan === 'FREE') subStats.FREE = s._count.plan;
       if (s.plan === 'PRO') subStats.PRO = s._count.plan;
       if (s.plan === 'ENTERPRISE') subStats.ENTERPRISE = s._count.plan;

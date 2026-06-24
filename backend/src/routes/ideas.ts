@@ -313,7 +313,7 @@ router.post('/:id/duplicate', authenticateToken, async (req: AuthenticatedReques
 
     const copy = await prisma.startupIdea.create({
       data: {
-        userId: req.user.id,
+        userId: req.user!.id,
         name: `${source.name} (Copy)`,
         industry: source.industry,
         targetCustomers: source.targetCustomers,
@@ -336,7 +336,7 @@ router.post('/:id/duplicate', authenticateToken, async (req: AuthenticatedReques
           }
         } : undefined,
         competitors: source.competitors ? {
-          create: source.competitors.map((c) => ({
+          create: source.competitors.map((c: any) => ({
             name: c.name,
             type: c.type,
             strengths: c.strengths,

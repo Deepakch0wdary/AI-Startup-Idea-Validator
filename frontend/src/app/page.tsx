@@ -238,7 +238,7 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-center gap-3 text-sm text-gray-300">
                   <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Export PPTX, PDF, and DOCX</span>
+                  <span>Export PDF and Print Report</span>
                 </li>
               </ul>
             </div>

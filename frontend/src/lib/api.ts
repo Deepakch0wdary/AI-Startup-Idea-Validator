@@ -33,11 +33,7 @@ async function request(path: string, options: RequestOptions = {}) {
 
   // Handle binary downloads for exports
   const contentType = response.headers.get('content-type');
-  if (contentType && (
-    contentType.includes('application/pdf') ||
-    contentType.includes('wordprocessingml') ||
-    contentType.includes('presentationml')
-  )) {
+  if (contentType && contentType.includes('application/pdf')) {
     return response.blob();
   }
 
@@ -69,9 +65,7 @@ export const api = {
     delete: (id: string) => request(`/api/ideas/${id}`, { method: 'DELETE' }),
   },
   reports: {
-    downloadPdfUrl: (id: string) => `${API_BASE_URL}/api/reports/${id}/pdf`,
-    downloadDocxUrl: (id: string) => `${API_BASE_URL}/api/reports/${id}/docx`,
-    downloadPptxUrl: (id: string) => `${API_BASE_URL}/api/reports/${id}/pptx`,
+    downloadPdf: (id: string) => request(`/api/reports/${id}/pdf`),
   },
   mentor: {
     ask: (ideaId: string, data: { mentorRole: string; message: string }) => 

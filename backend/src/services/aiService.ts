@@ -357,7 +357,7 @@ export async function askMentor(userId: string, ideaId: string, mentorRole: stri
     try {
       const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
         { role: 'system', content: chatContext },
-        ...history.map((h) => ({
+        ...history.map((h: any) => ({
           role: h.role as 'user' | 'assistant',
           content: h.content,
         })),

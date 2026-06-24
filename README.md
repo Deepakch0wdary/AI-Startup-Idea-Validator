@@ -9,7 +9,7 @@ This platform is a complete enterprise-grade SaaS designed to help entrepreneurs
 The application is built in a decoupled monorepo structure:
 - **Frontend (`frontend/`)**: Next.js 15 (App Router), React, TypeScript, Tailwind CSS (for premium dark glassmorphism layout), Framer Motion, and Recharts (for TAM/SAM/SOM & financial charting).
 - **Backend (`backend/`)**: Node.js, Express, TypeScript, Prisma ORM, PostgreSQL database, and OpenAI integration services.
-- **Export Engine**: Implements binary compiling for **PDF** (`pdfkit`), **DOCX** (`docx`), and editable **PowerPoint Slides** (`pptxgenjs`).
+- **Export Engine**: Implements binary compiling for **PDF** (`pdfkit`) and print formatting.
 
 ---
 
@@ -22,7 +22,7 @@ The application is built in a decoupled monorepo structure:
 │   │   ├── config/           # Database Client Singleton
 │   │   ├── middleware/       # Auth validation & error handlers
 │   │   ├── routes/           # REST APIs (auth, ideas, exports, mentor, admin)
-│   │   ├── services/         # OpenAI integration & PPT/DOC/PDF compilation
+│   │   ├── services/         # OpenAI integration & PDF compilation
 │   │   └── index.ts          # Server entrypoint
 │   ├── Dockerfile
 │   └── package.json

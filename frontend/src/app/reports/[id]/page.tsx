@@ -40,6 +40,26 @@ export default function ReportViewer() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const printAreaRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState<boolean>(false);
+
+  const handleDownload = async () => {
+    try {
+      setDownloading(true);
+      const blob = await api.reports.downloadPdf(id);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${idea.name.replace(/[^a-zA-Z0-9]/g, '_')}_validation_report.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (err: any) {
+      alert(`Failed to download PDF: ${err.message}`);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -115,28 +135,20 @@ export default function ReportViewer() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-3">
-          <a
-            href={api.reports.downloadPdfUrl(id)}
-            download
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-semibold cursor-pointer transition-all"
+          <button
+            onClick={handleDownload}
+            disabled={downloading}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-semibold cursor-pointer transition-all disabled:opacity-50"
           >
             <Download className="w-4 h-4" />
-            <span>PDF</span>
-          </a>
-          <a
-            href={api.reports.downloadDocxUrl(id)}
-            download
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-semibold cursor-pointer transition-all"
-          >
-            <Download className="w-4 h-4" />
-            <span>DOCX</span>
-          </a>
+            <span>{downloading ? 'Downloading...' : 'Download PDF'}</span>
+          </button>
           <button
             onClick={handlePrint}
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-semibold cursor-pointer transition-all"
           >
             <Printer className="w-4 h-4" />
-            <span>Print</span>
+            <span>Print Report</span>
           </button>
           
           <Link
@@ -672,14 +684,6 @@ export default function ReportViewer() {
           <div className="space-y-6 no-print">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-white font-outfit">Investor Pitch Deck Slides</h3>
-              <a
-                href={api.reports.downloadPptxUrl(id)}
-                download
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold cursor-pointer transition-all shadow-[0_0_15px_rgba(139,92,246,0.25)]"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download Editable PowerPoint (PPTX)</span>
-              </a>
             </div>
 
             {/* Slide Viewer */}
