@@ -1,0 +1,172 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  passwordHash  String?        // Nullable for Google OAuth users
+  name          String
+  role          Role           @default(USER)
+  googleId      String?        @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  ideas         StartupIdea[]
+  chats         ChatHistory[]
+  subscription  Subscription?
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan      String   @default("FREE") // FREE, PRO, ENTERPRISE
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StartupIdea {
+  id                 String              @id @default(uuid())
+  userId             String
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  industry           String
+  targetCustomers    String
+  countryRegion      String
+  problemStatement   String
+  solution           String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  report             Report?
+  swot               SWOTReport?
+  competitors        Competitor[]
+  revenueForecast    RevenueForecast?
+  riskReport         RiskReport?
+  teamRecommendation TeamRecommendation?
+  investorScore      InvestorScore?
+  successPrediction  SuccessPrediction?
+  businessModel      BusinessModelCanvas?
+  pitchDeck          PitchDeck?
+}
+
+model Report {
+  id               String      @id @default(uuid())
+  ideaId           String      @unique
+  idea             StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  businessOverview String
+  valueProposition String
+  problemSolved    String
+  createdAt        DateTime    @default(now())
+}
+
+model SWOTReport {
+  id            String      @id @default(uuid())
+  ideaId        String      @unique
+  idea          StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  strengths     String[]
+  weaknesses    String[]
+  opportunities String[]
+  threats       String[]
+}
+
+model Competitor {
+  id         String      @id @default(uuid())
+  ideaId     String
+  idea       StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  name       String
+  type       String      // DIRECT, INDIRECT, ALTERNATIVE
+  strengths  String[]
+  weaknesses String[]
+  advantages String[]    // Competitive advantages
+}
+
+model RevenueForecast {
+  id           String      @id @default(uuid())
+  ideaId       String      @unique
+  idea         StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  pricingModel String
+  streams      String[]
+  mrrForecast  Json        // Chart metrics: array of { month: string, revenue: number }
+  arrForecast  Json        // Chart metrics: array of { year: string, revenue: number }
+}
+
+model RiskReport {
+  id            String      @id @default(uuid())
+  ideaId        String      @unique
+  idea          StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  technicalRisk String
+  financialRisk String
+  adoptionRisk  String
+  marketRisk    String
+}
+
+model TeamRecommendation {
+  id     String      @id @default(uuid())
+  ideaId String      @unique
+  idea   StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  roles  Json        // Array of { title: string, reason: string, budget: string }
+}
+
+model SuccessPrediction {
+  id                 String      @id @default(uuid())
+  ideaId             String      @unique
+  idea               StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  successProbability Int         // Percentage
+  failureRisk        Int         // Percentage
+  growthPotential    Int         // Percentage
+  justification      String
+}
+
+model InvestorScore {
+  id                       String      @id @default(uuid())
+  ideaId                   String      @unique
+  idea                     StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  investorScore            Int         // Scale 1-100
+  scalabilityScore         Int
+  fundingReadiness         String      // HIGH, MEDIUM, LOW
+  marketFitScore           Int
+  investmentRecommendation String
+}
+
+model BusinessModelCanvas {
+  id                    String      @id @default(uuid())
+  ideaId                String      @unique
+  idea                  StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  keyPartners           String[]
+  keyActivities         String[]
+  keyResources          String[]
+  valuePropositions     String[]
+  customerRelationships String[]
+  channels              String[]
+  customerSegments      String[]
+  costStructure         String[]
+  revenueStreams        String[]
+}
+
+model PitchDeck {
+  id     String      @id @default(uuid())
+  ideaId String      @unique
+  idea   StartupIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  slides Json        // Array of { slideNumber: number, title: string, content: string[], metrics?: string }
+}
+
+model ChatHistory {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       String   // 'user' | 'assistant'
+  content    String
+  mentorRole String   // CONSULTANT, INVESTOR, PM, MARKETER, ANALYST
+  createdAt  DateTime @default(now())
+}
